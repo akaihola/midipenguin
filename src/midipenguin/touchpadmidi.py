@@ -44,7 +44,7 @@ def send_pitch_bend(touchpad: TouchpadInputDevice, x: int, midiout: MidiOut) -> 
     print(pbend // 260 * " ", msg)
 
 
-async def print_events(
+async def handle_touchpad_events(
     touchpad: TouchpadInputDevice, finger: FingerState, midiout: MidiOut
 ) -> None:
     async for event in touchpad.async_read_loop():
@@ -55,7 +55,7 @@ async def print_events(
             finger.touching = not event.value
 
 
-async def timer(
+async def recenter_pitch_bend(
     touchpad: TouchpadInputDevice, finger: FingerState, midiout: MidiOut
 ) -> None:
     while True:
@@ -95,8 +95,8 @@ def main() -> None:
         port_name="touchpad",
     )
 
-    asyncio.ensure_future(print_events(touchpad, finger, midiout))
-    asyncio.ensure_future(timer(touchpad, finger, midiout))
+    asyncio.ensure_future(handle_touchpad_events(touchpad, finger, midiout))
+    asyncio.ensure_future(recenter_pitch_bend(touchpad, finger, midiout))
     loop = asyncio.get_event_loop()
     loop.run_forever()
 
