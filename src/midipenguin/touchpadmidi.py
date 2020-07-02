@@ -13,7 +13,7 @@ from rtmidi.midiconstants import PITCH_BEND
 from rtmidi.midiutil import open_midioutput
 
 
-class Touchpad(InputDevice):
+class TouchpadInputDevice(InputDevice):
     def __init__(self, dev: PathLike[AnyStr]) -> None:
         super().__init__(dev)
         caps = self.capabilities()
@@ -28,19 +28,21 @@ class Touchpad(InputDevice):
 
 
 @dataclass
-class State:
+class FingerState:
     x: int
     touching: bool
 
 
-def send_pitch_bend(touchpad: Touchpad, x: int, midiout: MidiOut) -> None:
+def send_pitch_bend(touchpad: TouchpadInputDevice, x: int, midiout: MidiOut) -> None:
     pbend = min(16383, int(16384 * (x - touchpad.x_min) / touchpad.x_width))
     msg = [PITCH_BEND, pbend & 0x7F, (pbend >> 7) & 0x7F]
     midiout.send_message(msg)
     print(pbend // 260 * " ", msg)
 
 
-async def print_events(touchpad: Touchpad, finger: State, midiout: MidiOut) -> None:
+async def print_events(
+    touchpad: TouchpadInputDevice, finger: FingerState, midiout: MidiOut
+) -> None:
     async for event in touchpad.async_read_loop():
         if event.type == ecodes.EV_ABS and event.code == ecodes.ABS_X:
             finger.x = event.value
@@ -49,7 +51,9 @@ async def print_events(touchpad: Touchpad, finger: State, midiout: MidiOut) -> N
             finger.touching = not event.value
 
 
-async def timer(touchpad: Touchpad, finger: State, midiout: MidiOut) -> None:
+async def timer(
+    touchpad: TouchpadInputDevice, finger: FingerState, midiout: MidiOut
+) -> None:
     while True:
         await asyncio.sleep(0.01)
         if finger.touching:
@@ -69,7 +73,7 @@ class InvalidTouchpadDevice(Exception):
 def main() -> None:
     for path in evdev.list_devices():
         try:
-            touchpad = Touchpad(path)
+            touchpad = TouchpadInputDevice(path)
         except InvalidTouchpadDevice:
             continue
         else:
@@ -78,7 +82,7 @@ def main() -> None:
         print("Can't find a touchpad")
         sys.exit(1)
 
-    finger = State(x=0, touching=False)
+    finger = FingerState(x=0, touching=False)
 
     midiout, port_name = open_midioutput(
         api=API_UNIX_JACK,
