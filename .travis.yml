@@ -12,5 +12,15 @@ python:
                # enabled now
                # to troubleshoot https://github.com/SpotlightKid/python-rtmidi/issues/68
 install:
+  - >
+    if [ "$TRAVIS_PYTHON_VERSION" == "nightly" ]; then
+      pip download python-rtmidi ;
+      tar xvf python-rtmidi-*.tar.gz ;
+      rm python-rtmidi-*.tar.gz ;
+      cd python-rtmidi-* ;
+      make clean-build ;
+      python setup.py install ;
+      cd .. ;
+    fi
   - pip install -e '.[test]'
 script: pytest
