@@ -4,7 +4,7 @@ import asyncio
 import sys
 from dataclasses import dataclass
 from os import PathLike
-from typing import AnyStr
+from typing import AnyStr, cast
 
 import evdev
 from evdev import InputDevice, ecodes
@@ -20,8 +20,8 @@ class TouchpadInputDevice(InputDevice):
         if ecodes.EV_ABS not in caps:
             raise InvalidTouchpadDevice()
         abs_x_props = caps[ecodes.EV_ABS][ecodes.ABS_X][1]
-        self.x_min = abs_x_props.min
-        self.x_max = abs_x_props.max
+        self.x_min = cast(int, abs_x_props.min)
+        self.x_max = cast(int, abs_x_props.max)
         self.x_width = self.x_max - self.x_min
         self.x_middle = self.x_min + self.x_width // 2
         self.x_return_skip = self.x_width // 50
