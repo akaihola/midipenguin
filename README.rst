@@ -23,7 +23,17 @@ Fedora 30::
     virtualenv --system-site-packages ~/.virtualenvs/midipenguin
     . ~/.virtualenvs/midipenguin/bin/activate
     pip install -e '.[test]'
+    pytest
 
+    # Start the JACK server e.g. using QjackCtl__, the JACK Audio Connection Kit,
+    # then start touchpadmidi:
+
+    touchpadmidi
+
+    # You can now connect the "touchpadmidi" MIDI output
+    # e.g. to MIDI inputs of your DAW.
+
+__ https://qjackctl.sourceforge.io/
 
 GitHub stars trend
 ==================
