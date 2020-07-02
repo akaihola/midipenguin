@@ -8,9 +8,9 @@ python:
   - "3.7"
   - "3.8"
   - "3.9-dev"  # 3.9 development branch
-#  - "nightly"  # nightly build
-                # disabled for now,
-                # see https://github.com/SpotlightKid/python-rtmidi/issues/68
+  - "nightly"  # 3.10 nightly build
+               # enabled now
+               # to troubleshoot https://github.com/SpotlightKid/python-rtmidi/issues/68
 install:
   - pip install -e '.[test]'
 script: pytest
