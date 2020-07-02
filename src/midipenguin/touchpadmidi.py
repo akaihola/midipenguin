@@ -26,6 +26,10 @@ class TouchpadInputDevice(InputDevice):
         self.x_middle = self.x_min + self.x_width // 2
         self.x_return_skip = self.x_width // 50
 
+    def normalize_x(self, x: int) -> float:
+        """Normalize an X coordinate into the interval [0.0, 1.0]"""
+        return (x - self.x_min) / self.x_width
+
 
 @dataclass
 class FingerState:
@@ -34,7 +38,7 @@ class FingerState:
 
 
 def send_pitch_bend(touchpad: TouchpadInputDevice, x: int, midiout: MidiOut) -> None:
-    pbend = min(16383, int(16384 * (x - touchpad.x_min) / touchpad.x_width))
+    pbend = min(16383, int(16384 * touchpad.normalize_x(x)))
     msg = [PITCH_BEND, pbend & 0x7F, (pbend >> 7) & 0x7F]
     midiout.send_message(msg)
     print(pbend // 260 * " ", msg)
