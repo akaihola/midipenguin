@@ -23,3 +23,12 @@ Fedora 30::
     virtualenv --system-site-packages ~/.virtualenvs/midipenguin
     . ~/.virtualenvs/midipenguin/bin/activate
     pip install -e '.[test]'
+
+
+GitHub stars trend
+==================
+
+|stargazers|_
+
+.. |stargazers| image:: https://starchart.cc/akaihola/midipenguin.svg
+.. _stargazers: https://starchart.cc/akaihola/midipenguin
